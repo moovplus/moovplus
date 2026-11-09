@@ -1,0 +1,267 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #17243b;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #14243d;
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    font-size: 28px;
+    color: #ffd447;
+}
+
+.sidebar-descricao {
+    color: #aab7ca;
+    margin: 8px 0 30px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.sidebar nav a,
+.sair {
+    color: #dce4f0;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 7px;
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.ativo {
+    background: #263d60;
+    color: #ffd447;
+}
+
+.sair {
+    margin-top: auto;
+    color: #ffaaaa;
+}
+
+.conteudo {
+    flex: 1;
+    min-width: 0;
+    padding: 35px;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.topo h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.topo p {
+    color: #718096;
+}
+
+.botao {
+    display: inline-block;
+    border: 0;
+    background: #14243d;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.botao:hover {
+    background: #263d60;
+}
+
+.botao-secundario {
+    background: #e5eaf1;
+    color: #17243b;
+}
+
+.botao-excluir {
+    background: #c93636;
+}
+
+.botao-excluir:hover {
+    background: #a52222;
+}
+
+.card-form,
+.card-tabela {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+.card-form h2,
+.card-tabela h2 {
+    font-size: 20px;
+    margin-bottom: 22px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-completo {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dce2eb;
+    border-radius: 7px;
+    font: inherit;
+    background: white;
+}
+
+.campo textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid #d5e3fa;
+    border-color: #5478aa;
+}
+.campo-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.campo-checkbox input {
+    width: 17px;
+    height: 17px;
+}
+.acoes-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+.mensagem {
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: #e4f6e9;
+    color: #176331;
+}
+.mensagem.erro {
+    background: #fde8e8;
+    color: #a52222;
+}
+.tabela-responsiva {
+    width: 100%;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+th,
+td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #edf0f4;
+    font-size: 14px;
+}
+th {
+    color: #718096;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+.acoes-tabela {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.acoes-tabela a,
+.acoes-tabela button {
+    font-size: 13px;
+}
+.imagem-destino {
+    width: 65px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.vazio {
+    color: #718096;
+    padding: 20px 0;
+}
+@media (max-width: 850px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+    }
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .sair {
+        margin-top: 20px;
+    }
+    .conteudo {
+        padding: 20px;
+    }
+}
+@media (max-width: 550px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .campo-completo {
+        grid-column: auto;
+    }
+    .topo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
