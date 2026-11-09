@@ -1,0 +1,5 @@
+Coloque aqui as fotos do site. Os caminhos ficam no banco, por exemplo:
+  img/destinos/salvador.jpg   (tabela destino_imagens)
+  img/hoteis/hotel-3-0.jpg    (tabela hotel_imagens)
+  img/ofertas/fortaleza.jpg   (tabela ofertas)
+Se a foto não existir, o site mostra um bloco cinza com o nome. Nada quebra.

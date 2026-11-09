@@ -1,0 +1,147 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #17243b;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #14243d;
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    font-size: 28px;
+    color: #ffd447;
+}
+
+.sidebar-descricao {
+    color: #aab7ca;
+    margin: 8px 0 30px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.sidebar nav a,
+.sair {
+    color: #dce4f0;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 7px;
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.ativo {
+    background: #263d60;
+    color: #ffd447;
+}
+
+.sair {
+    margin-top: auto;
+    color: #ffaaaa;
+}
+
+.conteudo {
+    flex: 1;
+    padding: 35px;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.topo h1 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.topo p {
+    color: #718096;
+}
+
+.administrador {
+    background: #fff1bd;
+    color: #795d00;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 20px;
+}
+.card-indicador {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+}
+.card-indicador h3 {
+    color: #718096;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+.card-indicador strong {
+    font-size: 30px;
+    color: #17243b;
+}
+.boas-vindas {
+    margin-top: 30px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+}
+.boas-vindas h2 {
+    margin-bottom: 12px;
+}
+.boas-vindas p {
+    color: #718096;
+    line-height: 1.6;
+}
+@media (max-width: 900px) {
+    .sidebar {
+        width: 200px;
+    }
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+    }
+    .conteudo {
+        padding: 20px;
+    }
+    .indicadores {
+        grid-template-columns: 1fr;
+    }
+}
