@@ -31,6 +31,243 @@ $ofertas = $pdo->query(
       ORDER BY criado_em DESC
       LIMIT 3"
 )->fetchAll();
+$voos = $pdo->query("
+    SELECT
+        v.id,
+        v.preco,
+        v.duracao_total_minutos,
+        v.quantidade_escalas,
+        v.assentos_disponiveis,
+
+        (
+            SELECT ca.nome
+            FROM trechos_voos tv
+            INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS companhia,
+
+        (
+            SELECT ca.logo
+            FROM trechos_voos tv
+            INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS logo,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem_iata,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino_iata,
+
+        (
+            SELECT tv.horario_partida
+            FROM trechos_voos tv
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS partida,
+
+        (
+            SELECT tv.horario_chegada
+            FROM trechos_voos tv
+            WHERE tv.voo_id = v.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS chegada
+
+    FROM voos v
+    WHERE v.ativo = 1
+      AND v.assentos_disponiveis > 0
+      AND EXISTS (
+          SELECT 1
+          FROM trechos_voos tv
+          INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
+          WHERE tv.voo_id = v.id
+            AND ca.ativo = 1
+      )
+    ORDER BY v.criado_em DESC
+    LIMIT 6
+")->fetchAll();
+
+
+$pacotesDestaque = $pdo->query("
+    SELECT
+        p.id,
+        p.nome,
+        p.preco,
+
+        d.nome AS destino_nome,
+        h.nome AS hotel_nome,
+
+        (
+            SELECT ca.nome
+            FROM trechos_voos tv
+            INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS companhia,
+
+        (
+            SELECT ca.logo
+            FROM trechos_voos tv
+            INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS logo,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem_ida,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem_ida_iata,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino_ida,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino_ida_iata,
+
+        (
+            SELECT tv.horario_partida
+            FROM trechos_voos tv
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS partida_ida,
+
+        (
+            SELECT tv.horario_chegada
+            FROM trechos_voos tv
+            WHERE tv.voo_id = ida.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS chegada_ida,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem_volta,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_origem_id
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS origem_volta_iata,
+
+        (
+            SELECT a.cidade
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino_volta,
+
+        (
+            SELECT a.codigo_iata
+            FROM trechos_voos tv
+            INNER JOIN aeroportos a ON a.id = tv.aeroporto_destino_id
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS destino_volta_iata,
+
+        (
+            SELECT tv.horario_partida
+            FROM trechos_voos tv
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem ASC
+            LIMIT 1
+        ) AS partida_volta,
+
+        (
+            SELECT tv.horario_chegada
+            FROM trechos_voos tv
+            WHERE tv.voo_id = volta.id
+            ORDER BY tv.ordem DESC
+            LIMIT 1
+        ) AS chegada_volta
+
+    FROM pacotes p
+    INNER JOIN voos ida ON ida.id = p.voo_ida_id
+    LEFT JOIN voos volta ON volta.id = p.voo_volta_id
+    LEFT JOIN destinos d ON d.id = p.destino_id
+    LEFT JOIN hoteis h ON h.id = p.hotel_id
+
+    WHERE p.ativo = 1
+      AND ida.ativo = 1
+      AND (volta.id IS NULL OR volta.ativo = 1)
+
+    ORDER BY p.criado_em DESC
+    LIMIT 6
+")->fetchAll();
 
 $hoje   = date('Y-m-d');
 $titulo = 'Moov+ | Voos, hotéis e pacotes';
@@ -122,7 +359,7 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<section class="secao">
+<section class="secao" id="destinos">
   <div class="container">
     <h2>Destinos populares</h2>
     <?php if (!$destaques): ?>
@@ -130,16 +367,24 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
       <div class="grade">
         <?php foreach ($destaques as $d): ?>
-          <a class="cartao" href="destino.php?id=<?= (int) $d['id'] ?>">
-            <?php if (imagem_existe($d['imagem'])): ?>
-              <img src="<?= e($d['imagem']) ?>" alt="Foto de <?= e($d['nome']) ?>" loading="lazy">
-            <?php else: ?>
-              <div class="sem-foto"><?= e($d['nome']) ?></div>
-            <?php endif; ?>
-            <div class="cartao-texto">
+          <a class="destino-cartao" href="destino.php?id=<?= (int) $d['id'] ?>">
+            <div class="destino-foto">
+              <?php if (imagem_existe($d['imagem'])): ?>
+                <img src="<?= e($d['imagem']) ?>" alt="Foto de <?= e($d['nome']) ?>" loading="lazy">
+              <?php else: ?>
+                <div class="sem-foto"><?= e($d['nome']) ?></div>
+              <?php endif; ?>
+
+              <?php if (!empty($d['estado'])): ?>
+                <span class="destino-badge"><?= e($d['estado']) ?></span>
+              <?php endif; ?>
+            </div>
+
+            <div class="destino-info">
               <h3><?= e($d['nome']) ?></h3>
               <?php if ($d['preco_inicial']): ?>
-                <p>Voos a partir de <?= moeda($d['preco_inicial']) ?></p>
+                <small>Voos a partir de</small>
+                <strong><?= moeda($d['preco_inicial']) ?></strong>
               <?php endif; ?>
             </div>
           </a>
@@ -147,6 +392,52 @@ include __DIR__ . '/includes/header.php';
       </div>
     <?php endif; ?>
   </div>
+</section>
+<section class="secao" id="voos">
+    <div class="container">
+        <h2>Voos disponíveis</h2>
+        <?php if (!$voos): ?>
+            <p class="vazio">Nenhum voo disponível no momento.</p>
+        <?php else: ?>
+            <div class="grade grade-3">
+                <?php foreach ($voos as $v): ?>
+                    <article class="cartao-voo">
+                        <div class="voo-topo">
+                            <div class="voo-companhia">
+                                <?php if (!empty($v['logo'])): ?>
+                                    <img src="<?= e($v['logo']) ?>" alt="<?= e($v['companhia'] ?? 'Companhia aérea') ?>">
+                                <?php endif; ?>
+                                <span><?= e($v['companhia'] ?? 'Companhia aérea') ?></span>
+                            </div>
+                            <span class="voo-tipo">
+                                <?= (int) $v['quantidade_escalas'] === 0 ? 'Direto' : (int) $v['quantidade_escalas'] . ' escalas' ?>
+                            </span>
+                        </div>
+
+                        <div class="voo-rotas">
+                            <div>
+                                <strong>✈ IDA</strong>
+                                <p><?= e($v['origem_iata']) ?> - <?= e($v['destino_iata']) ?></p>
+                                <small><?= date('d/m/Y H:i', strtotime($v['partida'])) ?></small>
+                            </div>
+                            <div class="voo-destino">
+                                <strong><?= e($v['origem']) ?></strong>
+                                <p><?= e($v['destino']) ?></p>
+                            </div>
+                        </div>
+
+                        <div class="voo-rodape">
+                            <div>
+                                <small>Preço por pessoa a partir de</small>
+                                <strong><?= moeda($v['preco']) ?></strong>
+                            </div>
+                            <a href="voos.php?id=<?= (int) $v['id'] ?>">Seguinte <span>›</span></a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
 </section>
 
 <section class="secao" id="ofertas">
@@ -157,17 +448,44 @@ include __DIR__ . '/includes/header.php';
     <?php else: ?>
       <div class="grade grade-3">
         <?php foreach ($ofertas as $o): ?>
-          <a class="cartao" href="<?= e(link_oferta($o)) ?>">
-            <?php if (imagem_existe($o['imagem'])): ?>
-              <img src="<?= e($o['imagem']) ?>" alt="<?= e($o['titulo']) ?>" loading="lazy">
-            <?php else: ?>
-              <div class="sem-foto"><?= e($o['titulo']) ?></div>
-            <?php endif; ?>
-            <div class="cartao-texto">
+          <?php
+            $dias   = (int) ($o['pacote_dias'] ?? 0);
+            $noites = (int) ($o['pacote_noites'] ?? max($dias - 1, 0));
+            $promo  = (float) ($o['preco_promocional'] ?? 0);
+            $antigo = (float) ($o['preco_original'] ?? 0);
+            $economia = ($antigo > $promo && $promo > 0) ? $antigo - $promo : 0;
+          ?>
+          <a class="destino-cartao" href="<?= e(link_oferta($o)) ?>">
+            <div class="destino-foto">
+              <?php if (imagem_existe($o['imagem'])): ?>
+                <img src="<?= e($o['imagem']) ?>" alt="<?= e($o['titulo']) ?>" loading="lazy">
+              <?php else: ?>
+                <div class="sem-foto"><?= e($o['titulo']) ?></div>
+              <?php endif; ?>
+
+              <?php if ($dias > 0): ?>
+                <span class="destino-badge"><?= $dias ?> Dias / <?= $noites ?> Noites</span>
+              <?php endif; ?>
+            </div>
+
+            <div class="destino-info">
               <h3><?= e($o['titulo']) ?></h3>
-              <p><?= e($o['descricao']) ?></p>
-              <?php if ($o['preco_promocional']): ?>
-                <p class="preco"><?= moeda($o['preco_promocional']) ?></p>
+              <?php if (!empty($o['descricao'])): ?>
+                <p class="oferta-desc"><?= e($o['descricao']) ?></p>
+              <?php endif; ?>
+
+              <?php if ($economia > 0): ?>
+                <span class="oferta-economia">Economize <?= moeda($economia) ?></span>
+              <?php endif; ?>
+
+              <?php if ($promo > 0): ?>
+                <small>Preço por pessoa</small>
+                <div class="oferta-precos">
+                  <strong><?= moeda($promo) ?></strong>
+                  <?php if ($antigo > $promo): ?>
+                    <s><?= moeda($antigo) ?></s>
+                  <?php endif; ?>
+                </div>
               <?php endif; ?>
             </div>
           </a>

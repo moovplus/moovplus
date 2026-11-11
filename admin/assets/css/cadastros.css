@@ -265,3 +265,53 @@ th {
         flex-direction: column;
     }
 }
+
+.cards-resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.card-resumo {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.card-resumo h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.card-resumo strong {
+    font-size: 26px;
+    color: #166534;
+}
+
+.form-busca {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.form-busca .campo {
+    flex: 1;
+    min-width: 180px;
+}
+
+.form-status {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 145px;
+}
+
+.form-status select {
+    width: 100%;
+}

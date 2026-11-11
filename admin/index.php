@@ -66,7 +66,7 @@ $indicadores = [
 
         <p class="sidebar-descricao">Painel administrativo</p>
 
-        <nav>
+         <nav>
             <a href="index.php" class="ativo">Dashboard</a>
             <a href="destinos.php">Destinos</a>
             <a href="aeroportos.php">Aeroportos</a>
@@ -74,11 +74,13 @@ $indicadores = [
             <a href="voos.php">Voos</a>
             <a href="hoteis.php">Hotéis</a>
             <a href="comodidades.php">Comodidades</a>
+            <a href="quartos.php">Quartos</a>
             <a href="pacotes.php">Pacotes</a>
             <a href="ofertas.php">Ofertas</a>
             <a href="cupons.php">Cupons</a>
             <a href="reservas.php">Reservas</a>
             <a href="usuarios.php">Usuários</a>
+            <a href="pagamentos.php">Pagamentos</a>
         </nav>
 
         <a href="sair.php" class="sair">Sair do painel</a>

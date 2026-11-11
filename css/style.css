@@ -96,3 +96,247 @@ h1, h2, h3, .logo { font-family: "Space Grotesk", sans-serif; }
   .topo-interno { gap: 12px; padding-top: 12px; padding-bottom: 12px; }
   .menu { order: 3; width: 100%; }
 }
+
+
+/* CARTOES DE VOOS E PACOTES */
+#voos .grade-3 {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 360px));
+}
+
+.cartao-voo {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid #dce1e8;
+    border-radius: 27px;
+    overflow: hidden;
+    color: #0B1F33;
+    transition: 0.2s ease;
+}
+
+.cartao-voo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+}
+
+.voo-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e0e4eb;
+}
+
+.voo-companhia {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-size: 17px;
+    color: #273449;
+}
+
+.voo-companhia img {
+    display: block;
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.voo-tipo {
+    background: #30343d;
+    color: #fff;
+    padding: 6px 9px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.voo-rotas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 17px 20px;
+    min-height: 100px;
+}
+
+.voo-rotas strong {
+    color: #34445e;
+    font-size: 14px;
+}
+
+.voo-rotas p {
+    margin: 7px 0;
+    color: #34445e;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.voo-rotas small {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.voo-destino {
+    text-align: right;
+}
+
+.voo-rodape {
+    border-top: 1px solid #e0e4eb;
+    padding: 17px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.voo-rodape div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.voo-rodape small {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.voo-rodape strong {
+    font-size: 23px;
+    color: #273449;
+}
+
+.voo-rodape a {
+    color: #6500e8;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.voo-rodape a span {
+    font-size: 27px;
+    margin-left: 5px;
+}
+
+@media (max-width: 600px) {
+    .voo-rotas {
+        padding: 15px;
+    }
+
+    .voo-topo,
+    .voo-rodape {
+        padding: 15px;
+    }
+}
+/* CARTOES DE DESTINOS POPULARES */
+#destinos .grade {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
+}
+
+.destino-cartao {
+    display: block;
+    background: #fff;
+    border: 1px solid #dce1e8;
+    border-radius: 27px;
+    overflow: hidden;
+    color: #0B1F33;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.destino-cartao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+}
+
+.destino-foto {
+    position: relative;
+    height: 190px;
+}
+
+.destino-foto img,
+.destino-foto .sem-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.destino-badge {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    background: #30343d;
+    color: #fff;
+    padding: 6px 9px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.destino-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px 20px;
+}
+
+.destino-info h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #273449;
+}
+
+.destino-info small {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.destino-info strong {
+    font-size: 23px;
+    color: #273449;
+}
+/* CARTOES DE OFERTAS */
+#ofertas .grade-3 {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
+}
+
+#ofertas .destino-foto {
+    height: 200px;
+}
+
+.oferta-desc {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #47596B;
+}
+
+.oferta-economia {
+    align-self: flex-start;
+    background: #cdf3ee;
+    color: #0b5a52;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 6px 0 10px;
+}
+
+.oferta-precos {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.oferta-precos s {
+    color: #64748b;
+    font-size: 15px;
+}
