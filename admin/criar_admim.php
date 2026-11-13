@@ -14,9 +14,9 @@ $sql = "INSERT INTO administradores (nome, email, senha)
 $stmt = $pdo->prepare($sql);
 
 $stmt->execute([
-    "nome" => $nome,
-    "email" => $email,
-    "senha" => $senhaHash
+  "nome" => $nome,
+  "email" => $email,
+  "senha" => $senhaHash
 ]);
 
 echo "Administrador criado com sucesso!";

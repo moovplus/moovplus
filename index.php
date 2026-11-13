@@ -5,15 +5,15 @@ require_once __DIR__ . '/includes/funcoes.php';
 // A conexão já está disponível na variável $pdo.
 
 $aeroportos = $pdo->query(
-    "SELECT id, codigo_iata, cidade FROM aeroportos WHERE ativo = 1 ORDER BY cidade, codigo_iata"
+  "SELECT id, codigo_iata, cidade FROM aeroportos WHERE ativo = 1 ORDER BY cidade, codigo_iata"
 )->fetchAll();
 
 $destinos = $pdo->query(
-    "SELECT id, nome FROM destinos WHERE ativo = 1 ORDER BY nome"
+  "SELECT id, nome FROM destinos WHERE ativo = 1 ORDER BY nome"
 )->fetchAll();
 
 $destaques = $pdo->query(
-    "SELECT d.id, d.nome, d.estado, d.preco_inicial,
+  "SELECT d.id, d.nome, d.estado, d.preco_inicial,
             (SELECT i.caminho_imagem FROM destino_imagens i
               WHERE i.destino_id = d.id
               ORDER BY i.imagem_principal DESC, i.ordem LIMIT 1) AS imagem
@@ -24,7 +24,7 @@ $destaques = $pdo->query(
 )->fetchAll();
 
 $ofertas = $pdo->query(
-    "SELECT * FROM ofertas
+  "SELECT * FROM ofertas
       WHERE ativo = 1
         AND (validade_inicio IS NULL OR validade_inicio <= NOW())
         AND (validade_fim IS NULL OR validade_fim >= NOW())
@@ -118,6 +118,19 @@ $voos = $pdo->query("
           INNER JOIN companhias_aereas ca ON ca.id = tv.companhia_id
           WHERE tv.voo_id = v.id
             AND ca.ativo = 1
+      )
+      AND (
+          SELECT tv.aeroporto_origem_id
+          FROM trechos_voos tv
+          WHERE tv.voo_id = v.id
+          ORDER BY tv.ordem ASC
+          LIMIT 1
+      ) <> (
+          SELECT tv.aeroporto_destino_id
+          FROM trechos_voos tv
+          WHERE tv.voo_id = v.id
+          ORDER BY tv.ordem DESC
+          LIMIT 1
       )
     ORDER BY v.criado_em DESC
     LIMIT 6
@@ -270,7 +283,7 @@ $pacotesDestaque = $pdo->query("
 ")->fetchAll();
 
 $hoje   = date('Y-m-d');
-$titulo = 'Moov+ | Voos, hotéis e pacotes';
+$titulo = 'Moovplus | Voos, hotéis e pacotes';
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -281,17 +294,23 @@ include __DIR__ . '/includes/header.php';
 
     <div class="busca">
       <div class="abas" role="tablist">
-        <button type="button" class="aba ativa" role="tab" aria-selected="true"  data-alvo="form-voos">Voos</button>
-        <button type="button" class="aba"        role="tab" aria-selected="false" data-alvo="form-hoteis">Hotéis</button>
-        <button type="button" class="aba"        role="tab" aria-selected="false" data-alvo="form-pacotes">Pacotes</button>
+        <button type="button" class="aba ativa" role="tab" aria-selected="true" data-alvo="form-voos">Voos</button>
+        <button type="button" class="aba" role="tab" aria-selected="false" data-alvo="form-hoteis">Hotéis</button>
+        <button type="button" class="aba" role="tab" aria-selected="false" data-alvo="form-pacotes">Pacotes</button>
       </div>
 
       <form id="form-voos" class="form-busca" action="voos.php" method="get">
+        <label>Tipo de viagem
+          <select name="tipo_viagem" id="tipo_viagem">
+            <option value="ida_volta" selected>Ida e volta</option>
+            <option value="ida">Somente ida</option>
+          </select>
+        </label>
         <label>Origem
           <select name="origem" required>
             <option value="">Cidade ou aeroporto</option>
             <?php foreach ($aeroportos as $a): ?>
-              <option value="<?= (int) $a['id'] ?>"<?= $a['codigo_iata'] === 'GRU' ? ' selected' : '' ?>><?= e($a['cidade']) ?> (<?= e($a['codigo_iata']) ?>)</option>
+              <option value="<?= (int) $a['id'] ?>" <?= $a['codigo_iata'] === 'GRU' ? ' selected' : '' ?>><?= e($a['cidade']) ?> (<?= e($a['codigo_iata']) ?>)</option>
             <?php endforeach; ?>
           </select>
         </label>
@@ -303,12 +322,39 @@ include __DIR__ . '/includes/header.php';
             <?php endforeach; ?>
           </select>
         </label>
-        <label>Ida
-          <input type="date" id="ida" name="data" min="<?= $hoje ?>" required>
-        </label>
-        <label>Volta
-          <input type="date" id="volta" name="volta" min="<?= $hoje ?>">
-        </label>
+        <div class="area-calendario" data-calendario data-modo="viagem">
+          <label class="campo-datas">
+            Datas da viagem
+            <input
+              type="text"
+              id="periodo-datas"
+              class="input-periodo"
+              data-display
+              placeholder="Selecione ida e volta"
+              readonly
+              autocomplete="off"
+              required>
+            <input type="hidden" id="ida" name="data" data-inicio required>
+            <input type="hidden" id="volta" name="volta" data-fim>
+          </label>
+
+          <div class="calendario-popup" id="calendario-popup" data-popup hidden>
+            <div class="calendario-topo">
+              <button type="button" id="mes-anterior" data-anterior>‹</button>
+              <div class="calendario-meses" id="calendario-meses" data-meses></div>
+              <button type="button" id="mes-proximo" data-proximo>›</button>
+            </div>
+
+            <div class="calendario-rodape">
+              <span id="resumo-datas" data-resumo>Selecione as datas</span>
+              <div>
+                <button type="button" id="apagar-datas" data-apagar>Apagar</button>
+                <button type="button" id="aplicar-datas" data-aplicar>Aplicar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <label>Passageiros
           <select name="passageiros">
             <?php for ($n = 1; $n <= 6; $n++): ?>
@@ -328,12 +374,30 @@ include __DIR__ . '/includes/header.php';
             <?php endforeach; ?>
           </select>
         </label>
-        <label>Check-in
-          <input type="date" id="checkin" name="checkin" min="<?= $hoje ?>" required>
-        </label>
-        <label>Check-out
-          <input type="date" id="checkout" name="checkout" min="<?= $hoje ?>" required>
-        </label>
+        <div class="area-calendario" data-calendario data-modo="periodo">
+          <label class="campo-datas">
+            Check-in e check-out
+            <input type="text" class="input-periodo" data-display
+              placeholder="Selecione as datas" readonly required>
+            <input type="hidden" name="checkin" data-inicio required>
+            <input type="hidden" name="checkout" data-fim required>
+          </label>
+
+          <div class="calendario-popup" data-popup hidden>
+            <div class="calendario-topo">
+              <button type="button" data-anterior>‹</button>
+              <div class="calendario-meses" data-meses></div>
+              <button type="button" data-proximo>›</button>
+            </div>
+            <div class="calendario-rodape">
+              <span data-resumo>Selecione as datas</span>
+              <div>
+                <button type="button" data-apagar>Apagar</button>
+                <button type="button" data-aplicar>Aplicar</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <label>Hóspedes
           <select name="hospedes">
             <?php for ($n = 1; $n <= 6; $n++): ?>
@@ -345,15 +409,58 @@ include __DIR__ . '/includes/header.php';
       </form>
 
       <form id="form-pacotes" class="form-busca" action="pacotes.php" method="get" hidden>
+
         <label>Destino
           <select name="destino">
             <option value="">Qualquer destino</option>
+
             <?php foreach ($destinos as $d): ?>
-              <option value="<?= (int) $d['id'] ?>"><?= e($d['nome']) ?></option>
+              <option value="<?= (int) $d['id'] ?>">
+                <?= e($d['nome']) ?>
+              </option>
             <?php endforeach; ?>
           </select>
         </label>
-        <button class="botao" type="submit">Ver pacotes</button>
+
+        <div class="area-calendario" data-calendario data-modo="periodo">
+          <label class="campo-datas">
+            Datas da viagem
+            <input type="text" class="input-periodo" data-display
+              placeholder="Selecione ida e volta" readonly required>
+            <input type="hidden" name="data" data-inicio required>
+            <input type="hidden" name="volta" data-fim required>
+          </label>
+
+          <div class="calendario-popup" data-popup hidden>
+            <div class="calendario-topo">
+              <button type="button" data-anterior>‹</button>
+              <div class="calendario-meses" data-meses></div>
+              <button type="button" data-proximo>›</button>
+            </div>
+            <div class="calendario-rodape">
+              <span data-resumo>Selecione as datas</span>
+              <div>
+                <button type="button" data-apagar>Apagar</button>
+                <button type="button" data-aplicar>Aplicar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <label>Passageiros
+          <select name="passageiros">
+            <?php for ($n = 1; $n <= 6; $n++): ?>
+              <option value="<?= $n ?>">
+                <?= $n ?> <?= $n === 1 ? 'adulto' : 'adultos' ?>
+              </option>
+            <?php endfor; ?>
+          </select>
+        </label>
+
+        <button class="botao" type="submit">
+          Buscar pacotes
+        </button>
+
       </form>
     </div>
   </div>
@@ -394,50 +501,50 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 <section class="secao" id="voos">
-    <div class="container">
-        <h2>Voos disponíveis</h2>
-        <?php if (!$voos): ?>
-            <p class="vazio">Nenhum voo disponível no momento.</p>
-        <?php else: ?>
-            <div class="grade grade-3">
-                <?php foreach ($voos as $v): ?>
-                    <article class="cartao-voo">
-                        <div class="voo-topo">
-                            <div class="voo-companhia">
-                                <?php if (!empty($v['logo'])): ?>
-                                    <img src="<?= e($v['logo']) ?>" alt="<?= e($v['companhia'] ?? 'Companhia aérea') ?>">
-                                <?php endif; ?>
-                                <span><?= e($v['companhia'] ?? 'Companhia aérea') ?></span>
-                            </div>
-                            <span class="voo-tipo">
-                                <?= (int) $v['quantidade_escalas'] === 0 ? 'Direto' : (int) $v['quantidade_escalas'] . ' escalas' ?>
-                            </span>
-                        </div>
-
-                        <div class="voo-rotas">
-                            <div>
-                                <strong>✈ IDA</strong>
-                                <p><?= e($v['origem_iata']) ?> - <?= e($v['destino_iata']) ?></p>
-                                <small><?= date('d/m/Y H:i', strtotime($v['partida'])) ?></small>
-                            </div>
-                            <div class="voo-destino">
-                                <strong><?= e($v['origem']) ?></strong>
-                                <p><?= e($v['destino']) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="voo-rodape">
-                            <div>
-                                <small>Preço por pessoa a partir de</small>
-                                <strong><?= moeda($v['preco']) ?></strong>
-                            </div>
-                            <a href="voos.php?id=<?= (int) $v['id'] ?>">Seguinte <span>›</span></a>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
+  <div class="container">
+    <h2>Voos disponíveis</h2>
+    <?php if (!$voos): ?>
+      <p class="vazio">Nenhum voo disponível no momento.</p>
+    <?php else: ?>
+      <div class="grade grade-3">
+        <?php foreach ($voos as $v): ?>
+          <article class="cartao-voo">
+            <div class="voo-topo">
+              <div class="voo-companhia">
+                <?php if (!empty($v['logo'])): ?>
+                  <img src="<?= e($v['logo']) ?>" alt="<?= e($v['companhia'] ?? 'Companhia aérea') ?>">
+                <?php endif; ?>
+                <span><?= e($v['companhia'] ?? 'Companhia aérea') ?></span>
+              </div>
+              <span class="voo-tipo">
+                <?= (int) $v['quantidade_escalas'] === 0 ? 'Direto' : (int) $v['quantidade_escalas'] . ' escalas' ?>
+              </span>
             </div>
-        <?php endif; ?>
-    </div>
+
+            <div class="voo-rotas">
+              <div>
+                <strong>✈ IDA</strong>
+                <p><?= e($v['origem_iata']) ?> - <?= e($v['destino_iata']) ?></p>
+                <small><?= date('d/m/Y H:i', strtotime($v['partida'])) ?></small>
+              </div>
+              <div class="voo-destino">
+                <strong><?= e($v['origem']) ?></strong>
+                <p><?= e($v['destino']) ?></p>
+              </div>
+            </div>
+
+            <div class="voo-rodape">
+              <div>
+                <small>Preço por pessoa a partir de</small>
+                <strong><?= moeda($v['preco']) ?></strong>
+              </div>
+              <a href="voo.php?id=<?= (int) $v['id'] ?>">Seguinte <span>›</span></a>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </div>
 </section>
 
 <section class="secao" id="ofertas">
@@ -449,11 +556,11 @@ include __DIR__ . '/includes/header.php';
       <div class="grade grade-3">
         <?php foreach ($ofertas as $o): ?>
           <?php
-            $dias   = (int) ($o['pacote_dias'] ?? 0);
-            $noites = (int) ($o['pacote_noites'] ?? max($dias - 1, 0));
-            $promo  = (float) ($o['preco_promocional'] ?? 0);
-            $antigo = (float) ($o['preco_original'] ?? 0);
-            $economia = ($antigo > $promo && $promo > 0) ? $antigo - $promo : 0;
+          $dias   = (int) ($o['pacote_dias'] ?? 0);
+          $noites = (int) ($o['pacote_noites'] ?? max($dias - 1, 0));
+          $promo  = (float) ($o['preco_promocional'] ?? 0);
+          $antigo = (float) ($o['preco_original'] ?? 0);
+          $economia = ($antigo > $promo && $promo > 0) ? $antigo - $promo : 0;
           ?>
           <a class="destino-cartao" href="<?= e(link_oferta($o)) ?>">
             <div class="destino-foto">
@@ -494,5 +601,6 @@ include __DIR__ . '/includes/header.php';
     <?php endif; ?>
   </div>
 </section>
+<script src="js/calendario.js" defer></script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
