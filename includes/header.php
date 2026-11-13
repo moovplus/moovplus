@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/funcoes.php';
-$titulo = $titulo ?? 'Moov+';
+$titulo = $titulo ?? 'Moovplus';
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -15,7 +15,7 @@ $titulo = $titulo ?? 'Moov+';
 <body>
 <header class="topo">
   <div class="container topo-interno">
-    <a class="logo" href="index.php">Moov+</a>
+    <a class="logo" href="index.php">Moovplus</a>
     <nav class="menu" aria-label="Menu principal">
       <a href="voos.php">Voos</a>
       <a href="hoteis.php">Hotéis</a>

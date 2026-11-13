@@ -5,7 +5,7 @@
     <div><strong>Cancelamento flexível</strong><span>Em hotéis selecionados</span></div>
     <div><strong>Atendimento 24h</strong><span>Chat e telefone</span></div>
   </div>
-  <p class="copy">© <?= date('Y') ?> Moov+ · Projeto escolar</p>
+  <p class="copy">© <?= date('Y') ?> Moovplus · Projeto escolar</p>
 </footer>
 <script src="js/app.js"></script>
 </body>
