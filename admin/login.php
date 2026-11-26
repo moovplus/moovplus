@@ -19,7 +19,7 @@ unset($_SESSION["erro_admin"]);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Área administrativa | Rotas</title>
+  <title>Área administrativa | Moovplus</title>
 
   <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
@@ -27,7 +27,7 @@ unset($_SESSION["erro_admin"]);
 <body>
 
   <header>
-    <a href="../index.php" class="logo">Rotas</a>
+    <a href="../index.php" class="logo">Moovplus</a>
 
     <a href="../index.php" class="voltar">
       Voltar ao site

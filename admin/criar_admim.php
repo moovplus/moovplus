@@ -3,7 +3,7 @@
 require_once "../config/conexao.php";
 
 $nome = "Administrador";
-$email = "admin@rotas.com";
+$email = "admin@moovplus.com";
 $senha = "12345678";
 
 $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
