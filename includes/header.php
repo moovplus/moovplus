@@ -20,6 +20,7 @@ $titulo = $titulo ?? 'Moovplus';
       <a href="voos.php">Voos</a>
       <a href="hoteis.php">Hotéis</a>
       <a href="pacotes.php">Pacotes</a>
+      <a href="consultar_viagem.php">Consultar viagem</a>
       <a href="index.php#ofertas">Ofertas</a>
     </nav>
     <?php if (!empty($_SESSION['usuario_nome'])): ?>
