@@ -9,7 +9,7 @@ function dataValida($data)
     return $objeto && $objeto->format('Y-m-d') === $data;
 }
 
-/* "Qui 25 Mar" */
+
 function dataCurta($data)
 {
     if (!$data) {
@@ -23,7 +23,6 @@ function dataCurta($data)
     return $dias[(int) date('w', $t)] . ' ' . date('d', $t) . ' ' . $meses[(int) date('n', $t) - 1];
 }
 
-/* Destinos (SELECT * para achar a coluna da foto sem depender do nome exato) */
 $destinos = $pdo->query("
     SELECT *
     FROM destinos
@@ -192,7 +191,7 @@ if ($destino && !in_array(
     $pacotes = $stmt->fetchAll();
 }
 
-/* Textos do topo */
+
 $destinoNome = '';
 foreach ($destinos as $d) {
     if ((int) $d['id'] === (int) $destino) {
@@ -211,7 +210,7 @@ $subtituloPagina = $destinoNome
 
 $porPagina = 8;
 
-/* Dados do banner */
+
 $periodo = dataValida($dataIda) ? date('d/m/y', strtotime($dataIda)) : '';
 if (dataValida($dataVolta)) {
     $periodo .= ($periodo ? ' - ' : '') . date('d/m/y', strtotime($dataVolta));

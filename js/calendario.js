@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // CALENDÁRIOS
     const calendarios = document.querySelectorAll("[data-calendario]");
 
     const hoje = new Date();

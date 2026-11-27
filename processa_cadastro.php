@@ -9,6 +9,34 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
+function cpfValido($cpf) {
+    $cpf = preg_replace('/\D/', '', $cpf);
+
+    if (strlen($cpf) !== 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
+        return false;
+    }
+
+    for ($t = 9; $t < 11; $t++) {
+        $soma = 0;
+
+        for ($i = 0; $i < $t; $i++) {
+            $soma += (int)$cpf[$i] * (($t + 1) - $i);
+        }
+
+        $digito = ($soma * 10) % 11;
+
+        if ($digito === 10) {
+            $digito = 0;
+        }
+
+        if ($digito !== (int)$cpf[$t]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 $nome = trim($_POST["nome"] ?? "");
 $sobrenome = trim($_POST["sobrenome"] ?? "");
 $email = trim($_POST["email"] ?? "");
@@ -18,7 +46,15 @@ $dataNascimento = trim($_POST["data_nascimento"] ?? "");
 $senha = $_POST["senha"] ?? "";
 $confirmarSenha = $_POST["confirmar_senha"] ?? "";
 
-if ($nome === "" || $sobrenome === "" || $email === "" || $senha === "") {
+if (
+    $nome === "" ||
+    $sobrenome === "" ||
+    $email === "" ||
+    $senha === "" ||
+    $confirmarSenha === "" ||
+    $cpf === "" ||
+    $dataNascimento === ""
+) {
     $_SESSION["erro_cadastro"] = "Preencha todos os campos obrigatórios.";
     header("Location: cadastro.php");
     exit;
@@ -42,8 +78,21 @@ if ($senha !== $confirmarSenha) {
     exit;
 }
 
-if ($cpf !== "" && strlen($cpf) !== 11) {
-    $_SESSION["erro_cadastro"] = "Digite um CPF válido.";
+if (!cpfValido($cpf)) {
+    $_SESSION["erro_cadastro"] = "CPF inválido. Verifique os números digitados.";
+    header("Location: cadastro.php");
+    exit;
+}
+
+$data = DateTime::createFromFormat("!Y-m-d", $dataNascimento);
+$hoje = new DateTime("today");
+
+if (
+    !$data ||
+    $data->format("Y-m-d") !== $dataNascimento ||
+    $data >= $hoje
+) {
+    $_SESSION["erro_cadastro"] = "Data de nascimento inválida. Verifique a data digitada.";
     header("Location: cadastro.php");
     exit;
 }
@@ -66,23 +115,21 @@ try {
         exit;
     }
 
-    if ($cpf !== "") {
-        $consulta = $pdo->prepare("
-            SELECT id
-            FROM usuarios
-            WHERE cpf = :cpf
-            LIMIT 1
-        ");
+    $consulta = $pdo->prepare("
+        SELECT id
+        FROM usuarios
+        WHERE cpf = :cpf
+        LIMIT 1
+    ");
 
-        $consulta->execute([
-            ":cpf" => $cpf
-        ]);
+    $consulta->execute([
+        ":cpf" => $cpf
+    ]);
 
-        if ($consulta->fetch()) {
-            $_SESSION["erro_cadastro"] = "Este CPF já está cadastrado.";
-            header("Location: cadastro.php");
-            exit;
-        }
+    if ($consulta->fetch()) {
+        $_SESSION["erro_cadastro"] = "Este CPF já está cadastrado.";
+        header("Location: cadastro.php");
+        exit;
     }
 
     $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
@@ -112,9 +159,9 @@ try {
         ":sobrenome" => $sobrenome,
         ":email" => $email,
         ":senha" => $senhaHash,
-        ":cpf" => $cpf !== "" ? $cpf : null,
+        ":cpf" => $cpf,
         ":telefone" => $telefone !== "" ? $telefone : null,
-        ":data_nascimento" => $dataNascimento !== "" ? $dataNascimento : null
+        ":data_nascimento" => $dataNascimento
     ]);
 
     $_SESSION["sucesso_cadastro"] = "Conta criada com sucesso! Faça login para continuar.";

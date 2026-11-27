@@ -384,7 +384,7 @@ h3,
 }
 
 
-/* CARTOES DE VOOS E PACOTES */
+
 #voos .grade-3 {
   grid-template-columns: repeat(auto-fill, minmax(300px, 360px));
 }
@@ -521,7 +521,7 @@ h3,
   }
 }
 
-/* CARTOES DE DESTINOS POPULARES */
+
 #destinos .grade {
   grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
 }
@@ -590,7 +590,7 @@ h3,
   color: #273449;
 }
 
-/* CARTOES DE OFERTAS */
+
 #ofertas .grade-3 {
   grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
 }
@@ -629,7 +629,7 @@ h3,
   font-size: 15px;
 }
 
-/* DETALHES DO VOO */
+
 
 .pagina-voo {
   background: #f7f9fc;
@@ -969,7 +969,7 @@ h3,
   }
 }
 
-/* RESULTADOS DE VOOS */
+
 
 .pagina-voos {
   min-height: 65vh;
@@ -1078,7 +1078,7 @@ h3,
   }
 }
 
-/* CALENDARIO */
+
 
 .campo-datas {
   position: relative;
@@ -1279,7 +1279,7 @@ h3,
   left: 0;
 }
 
-/* BANNER DE BUSCA (estilo resultados da Azul) */
+
 
 .banner-busca {
   background: var(--azul-escuro);
@@ -1288,7 +1288,7 @@ h3,
   margin-bottom: 30px;
 }
 
-/* nas paginas de hoteis e pacotes a section vem logo depois do banner */
+
 .banner-busca + .secao {
   padding-top: 0;
 }
@@ -1402,7 +1402,7 @@ h3,
   }
 }
 
-/* PAGINA DE PACOTES (cartoes com foto) */
+
 
 .pacotes-busca {
   display: grid;

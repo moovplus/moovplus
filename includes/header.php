@@ -17,6 +17,7 @@ $titulo = $titulo ?? 'Moovplus';
   <div class="container topo-interno">
     <a class="logo" href="index.php">Moovplus</a>
     <nav class="menu" aria-label="Menu principal">
+      <a href="index.php">Inicio</a>
       <a href="voos.php">Voos</a>
       <a href="hoteis.php">Hotéis</a>
       <a href="pacotes.php">Pacotes</a>

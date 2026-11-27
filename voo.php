@@ -13,11 +13,6 @@ if (!$passageiros || $passageiros < 1 || $passageiros > 6) {
   $passageiros = 1;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Busca um voo e seus trechos
-|--------------------------------------------------------------------------
-*/
 
 function carregarVoo($pdo, $id, $passageiros)
 {
@@ -78,18 +73,14 @@ function carregarVoo($pdo, $id, $passageiros)
   ];
 }
 
-/*
-|--------------------------------------------------------------------------
-| Define se é somente ida ou ida e volta
-|--------------------------------------------------------------------------
-*/
+
 
 $voosSelecionados = [];
 $erro = '';
 
 if ($id && !$ida && !$volta) {
 
-  // Somente ida
+
 
   $resultado = carregarVoo($pdo, $id, $passageiros);
 
@@ -104,7 +95,6 @@ if ($id && !$ida && !$volta) {
   }
 } elseif ($ida && $volta && !$id && $ida !== $volta) {
 
-  // Ida e volta
 
   $resultadoIda = carregarVoo($pdo, $ida, $passageiros);
   $resultadoVolta = carregarVoo($pdo, $volta, $passageiros);
@@ -119,7 +109,7 @@ if ($id && !$ida && !$volta) {
     $primeiroVolta = $resultadoVolta['trechos'][0];
     $ultimoVolta = $resultadoVolta['trechos'][count($resultadoVolta['trechos']) - 1];
 
-    // Confere se a volta faz o caminho inverso da ida
+   
 
     if (
       (int) $ultimoIda['aeroporto_destino_id'] !== (int) $primeiroVolta['aeroporto_origem_id'] ||
@@ -150,11 +140,7 @@ if ($id && !$ida && !$volta) {
   $erro = 'Não foi possível identificar os voos selecionados.';
 }
 
-/*
-|--------------------------------------------------------------------------
-| Calcula os valores
-|--------------------------------------------------------------------------
-*/
+
 
 $totalPorPessoa = 0;
 

@@ -1,7 +1,4 @@
--- Banco de dados MOOVPLUS (estrutura)
--- MySQL 8.0+ / MariaDB compatível em sua maior parte
--- Execute este arquivo primeiro; depois execute moovplus_dados.sql (dados de exemplo).
--- Para refazer do zero: DROP DATABASE moovplus; e execute de novo.
+
 
 CREATE DATABASE IF NOT EXISTS moovplus
   CHARACTER SET utf8mb4
@@ -9,9 +6,7 @@ CREATE DATABASE IF NOT EXISTS moovplus
 
 USE moovplus;
 
--- =========================================================
--- 1. USUÁRIOS E ADMINISTRADORES
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS usuarios (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -37,9 +32,7 @@ CREATE TABLE IF NOT EXISTS administradores (
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 2. DESTINOS E IMAGENS
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS destinos (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -71,7 +64,7 @@ CREATE TABLE IF NOT EXISTS destino_imagens (
   INDEX idx_destino_imagens_ordem (destino_id, ordem)
 ) ENGINE=InnoDB;
 
--- Pontos turísticos (seção "O que fazer" da página de destino)
+
 CREATE TABLE IF NOT EXISTS atracoes (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   destino_id BIGINT UNSIGNED NOT NULL,
@@ -85,9 +78,7 @@ CREATE TABLE IF NOT EXISTS atracoes (
   INDEX idx_atracoes_destino (destino_id, ordem)
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 3. COMPANHIAS, AEROPORTOS, VOOS E TRECHOS
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS companhias_aereas (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -105,7 +96,7 @@ CREATE TABLE IF NOT EXISTS aeroportos (
   cidade VARCHAR(120) NOT NULL,
   estado VARCHAR(120) NULL,
   pais VARCHAR(120) NOT NULL,
-  destino_id BIGINT UNSIGNED NULL, -- liga o aeroporto ao destino (voos para Salvador)
+  destino_id BIGINT UNSIGNED NULL, 
   ativo TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT fk_aeroportos_destino
     FOREIGN KEY (destino_id) REFERENCES destinos(id)
@@ -113,9 +104,7 @@ CREATE TABLE IF NOT EXISTS aeroportos (
   INDEX idx_aeroportos_cidade (cidade, pais)
 ) ENGINE=InnoDB;
 
--- Um voo representa uma opção/itinerário completo de UM sentido (ida OU volta).
--- Ida e volta = dois voos (veja pacotes.voo_ida_id / voo_volta_id e reserva_voos.sentido).
--- Cada etapa (inclusive escalas) fica em trechos_voos.
+
 CREATE TABLE IF NOT EXISTS voos (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   codigo_referencia VARCHAR(60) NULL UNIQUE,
@@ -159,9 +148,7 @@ CREATE TABLE IF NOT EXISTS trechos_voos (
   INDEX idx_trechos_horarios (horario_partida, horario_chegada)
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 4. HOTÉIS, IMAGENS, COMODIDADES, QUARTOS E AVALIAÇÕES
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS hoteis (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -248,9 +235,7 @@ CREATE TABLE IF NOT EXISTS avaliacoes_hoteis (
   INDEX idx_avaliacoes_hotel_data (hotel_id, data_avaliacao)
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 5. PACOTES E OFERTAS
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS pacotes (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -304,9 +289,7 @@ CREATE TABLE IF NOT EXISTS ofertas (
   INDEX idx_ofertas_periodo (ativo, validade_inicio, validade_fim)
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 6. RESERVAS, PASSAGEIROS E ITENS RESERVADOS
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS reservas (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -388,9 +371,7 @@ CREATE TABLE IF NOT EXISTS reserva_hoteis (
   INDEX idx_reserva_hoteis_datas (hotel_id, checkin, checkout)
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 7. PAGAMENTOS E CUPONS
--- =========================================================
+
 
 CREATE TABLE IF NOT EXISTS pagamentos (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -438,11 +419,8 @@ CREATE TABLE IF NOT EXISTS reserva_cupons (
     ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- =========================================================
--- 8. VIEWS (consultas prontas para as telas)
--- =========================================================
 
--- Hotéis com nota média e quantidade de avaliações calculadas na hora
+
 CREATE OR REPLACE VIEW vw_hoteis_avaliacao AS
 SELECT h.*,
        ROUND(AVG(a.nota), 1) AS nota_media,
@@ -451,7 +429,6 @@ FROM hoteis h
 LEFT JOIN avaliacoes_hoteis a ON a.hotel_id = h.id
 GROUP BY h.id;
 
--- Voos com origem, destino e horários (primeiro e último trecho): usar na busca de voos
 CREATE OR REPLACE VIEW vw_voos_busca AS
 SELECT v.id AS voo_id, v.preco, v.duracao_total_minutos, v.quantidade_escalas,
        v.assentos_disponiveis,

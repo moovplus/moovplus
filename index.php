@@ -2,7 +2,7 @@
 require_once __DIR__ . '/config/conexao.php';
 require_once __DIR__ . '/includes/funcoes.php';
 
-// A conexão já está disponível na variável $pdo.
+
 
 $aeroportos = $pdo->query(
   "SELECT id, codigo_iata, cidade FROM aeroportos WHERE ativo = 1 ORDER BY cidade, codigo_iata"
